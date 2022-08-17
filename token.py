@@ -12,7 +12,7 @@ class Token(object):
         return self.m_token
 
     def IsValid(self):
-        return (not self.m_invalid) or int(time.time()) < self.m_start + EXPIRED_TIME
+        return (not self.m_invalid) and int(time.time()) < self.m_start + EXPIRED_TIME
 
     def SetInvalidate(self):
         self.m_invalid = True

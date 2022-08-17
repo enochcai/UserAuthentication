@@ -1,10 +1,10 @@
 #--coding:utf-8---
-import user
-import role
-import token
+import user as user_module
+import role as role_module
+import token as token_module
 
-def INFO(*args):
-    print(args)
+def INFO(msg):
+    print(msg)
 
 ALL_USERS = {}
 ALL_ROLES = {}
@@ -19,12 +19,12 @@ def CreateUser():
         INFO("User already exist! Please change other name")
         return False
 
-    password = input("Input password:")
+    password = str(input("Input password:"))
     if not password:
         INFO("password can't none'")
         return False
     
-    newUser = user.User(name, password)
+    newUser = user_module.User(name, password)
     ALL_USERS[name] = newUser
     INFO("Create User success!")
     return True
@@ -46,8 +46,7 @@ def CreateRole():
     if roleName in ALL_ROLES:
         INFO("Role already exist!")
         return False
-	newRole = role.Role(roleName)
-    #INFO("create Role:", role.Role(roleName))
+    newRole = role_module.CRole(roleName)
     ALL_ROLES[roleName] = newRole
     INFO("Create Role Success!")
     return True
@@ -60,7 +59,13 @@ def DeleteRole():#Should fail if the user doesn't exist
     if roleName not in ALL_ROLES:
         INFO("Role not exist!")
         return False, "Role not exist!"
-    ALL_ROLES.pop(roleName)
+
+    role = ALL_ROLES.pop(roleName)
+    if role.IsAssociated():
+        userName = role.GetUser()
+        if userName in ALL_USERS:
+            user = ALL_USERS[userName]
+            user.DeleteRole(roleName)
     INFO("Delete role success!")
     return True
 			
@@ -97,19 +102,19 @@ def Authenticate():
         INFO("User not exist!")
         return False
 
-    password = raw_input("Input password:")
+    password = str(raw_input("Input password:"))
     if not password:
         INFO("password can't none'")
         return False 
 
-    user = ALL_USERS[username]
+    user = ALL_USERS[userName]
     if not user.CheckPassword(password):
         INFO("Password error!Please retry!")
         return False
-    newToken = token.Token()
+    newToken = token_module.Token()
     user.AddToken(newToken)
     ALL_TOKEN_TO_USER[newToken.Info()] = user
-    INFO("Authenticate success!token is:%s", newToken.Info())
+    INFO("Authenticate success!token is:%s"%(newToken.Info()))
     return True
 
 def	Invalidate():
@@ -134,6 +139,7 @@ def CheckRole():
         INFO("Role not exist!")
         return False
     user = ALL_TOKEN_TO_USER[authToken]
+    role = ALL_ROLES[roleName]
     if not user.HasRole(role):
         INFO("role and token not associated!")
         return False
@@ -155,7 +161,7 @@ def AllRoles():
         INFO("Token is invalidate!")
         return False
     lstRoleNames = user.GetAllRoleName()
-    INFO("all roles are: %s", lstRoleNames.join(","))
+    INFO("all roles are: %s"%(",".join(lstRoleNames)))
     return True
 
 def generatenum(n):
