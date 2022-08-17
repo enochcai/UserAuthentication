@@ -2,6 +2,7 @@
 import user as user_module
 import role as role_module
 import token as token_module
+import tool
 
 def INFO(msg):
     print(msg)
@@ -23,7 +24,7 @@ def CreateUser():
     if not password:
         INFO("password can't none'")
         return False
-    
+    password = tool.Encryption(password) 
     newUser = user_module.User(name, password)
     ALL_USERS[name] = newUser
     INFO("Create User success!")
@@ -107,7 +108,8 @@ def Authenticate():
         INFO("password can't none'")
         return False 
 
-    user = ALL_USERS[userName]
+    user = ALL_USERS[userName] 
+    password = tool.Encryption(password) 
     if not user.CheckPassword(password):
         INFO("Password error!Please retry!")
         return False
