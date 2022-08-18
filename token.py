@@ -1,6 +1,6 @@
 import time
 
-EXPIRED_TIME = 7200 #2 hour expired
+EXPIRED_TIME = 1#7200 #2 hour expired
 
 def GenerateToken():
     token_id = [100]

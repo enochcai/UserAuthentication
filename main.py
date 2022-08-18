@@ -11,8 +11,13 @@ ALL_USERS = {}
 ALL_ROLES = {}
 ALL_TOKEN_TO_USER = {}
 
-def CreateUser():
+def InputCreateUser():
     name = raw_input("Input user name:")
+    password = raw_input("Input password:")
+    return name, password
+
+def CreateUser(name, password):
+    #name = raw_input("Input user name:")
     if not name:
         INFO("name can't none")
         return False
@@ -20,7 +25,7 @@ def CreateUser():
         INFO("User already exist! Please change other name")
         return False
 
-    password = str(input("Input password:"))
+    #password = str(input("Input password:"))
     if not password:
         INFO("password can't none'")
         return False
@@ -30,8 +35,11 @@ def CreateUser():
     INFO("Create User success!")
     return True
 
-def DeleteUser():
+def InputDeleteUser():
     name = raw_input("Input user name to delete:")
+    return name
+
+def DeleteUser(name):
     if name not in ALL_USERS:
         INFO("User not exist!")
         return False
@@ -39,8 +47,12 @@ def DeleteUser():
     ALL_USERS.pop(name)
     return True
 
-def CreateRole():
+def InputCreateRole():
     roleName = raw_input("Input role name:")
+    return roleName
+
+def CreateRole(roleName):
+    #roleName = raw_input("Input role name:")
     if not roleName:
         INFO("Role name can't none")
         return
@@ -52,8 +64,12 @@ def CreateRole():
     INFO("Create Role Success!")
     return True
 
-def DeleteRole():#Should fail if the user doesn't exist
+def InputDeleteRole():
     roleName = raw_input("Input role name to delete:")
+    return roleName
+
+def DeleteRole(roleName):#Should fail if the user doesn't exist
+    #roleName = raw_input("Input role name to delete:")
     if not roleName:
         INFO("Role name can't none")
         return
@@ -69,9 +85,14 @@ def DeleteRole():#Should fail if the user doesn't exist
             user.DeleteRole(roleName)
     INFO("Delete role success!")
     return True
-			
-def AddRoleToUser():
+	
+def InputAddRoleToUser():
     userName = raw_input("Input user name:")
+    roleName = raw_input("Input role name:")
+    return userName, roleName
+
+def AddRoleToUser(userName, roleName):
+    #userName = raw_input("Input user name:")
     if not userName:
         INFO("user name can't none")
         return
@@ -80,7 +101,7 @@ def AddRoleToUser():
         return
     user = ALL_USERS[userName]
     
-    roleName = raw_input("Input role name:")
+    #roleName = raw_input("Input role name:")
     if not roleName:
         INFO("Role name can't none")
         return
@@ -93,9 +114,14 @@ def AddRoleToUser():
         return
     user.AddRole(role)
     INFO("Role associate to role success!")
-		
-def Authenticate():
+
+def InputAuthenticate():
     userName = raw_input("Input user name:")
+    password = str(raw_input("Input password:"))
+    return userName, password
+
+def Authenticate(userName, password):
+    #userName = raw_input("Input user name:")
     if not userName:
         INFO("User name can't none")
         return False
@@ -103,7 +129,7 @@ def Authenticate():
         INFO("User not exist!")
         return False
 
-    password = str(raw_input("Input password:"))
+    #password = str(raw_input("Input password:"))
     if not password:
         INFO("password can't none'")
         return False 
@@ -119,8 +145,12 @@ def Authenticate():
     INFO("Authenticate success!token is:%s"%(newToken.Info()))
     return True
 
-def	Invalidate():
+def InputInvalidate():
     authToken = raw_input("Please input token:")
+    return authToken
+
+def	Invalidate(authToken):
+    #authToken = raw_input("Please input token:")
     if authToken not in ALL_TOKEN_TO_USER:
         INFO("Token error!")
         return
@@ -131,12 +161,17 @@ def	Invalidate():
     myToken.SetInvalidate()
     INFO("Set token invalidate success!")
 
-def CheckRole():
+def InputCheckRole():
     authToken = raw_input("Please input token:")
+    roleName = raw_input("Please input role name:")
+    return authToken, roleName
+
+def CheckRole(authToken, roleName):
+    #authToken = raw_input("Please input token:")
     if authToken not in ALL_TOKEN_TO_USER:
         INFO("Token error!")
         return False
-    roleName = raw_input("Please input role name:")
+    #roleName = raw_input("Please input role name:")
     if roleName not in ALL_ROLES:
         INFO("Role not exist!")
         return False
@@ -152,8 +187,12 @@ def CheckRole():
     INFO("Token is invalidate!")
     return False
 
-def AllRoles():
+def InputAllRoles():
     authToken = raw_input("Please input token:")
+    return authToken
+
+def AllRoles(authToken):
+    #authToken = raw_input("Please input token:")
     if authToken not in ALL_TOKEN_TO_USER:
         INFO("Token not exist!")
         return False
@@ -186,15 +225,15 @@ CHECK_ROLE = GetNum()
 PRINT_ALL_ROLES = GetNum()
 
 MENU_FUNC = {
-    CREATE_USER:CreateUser,
-    DELETE_USER:DeleteUser,
-    CREATE_ROLE:CreateRole,
-    DELETE_ROLE:DeleteRole,
-    ADD_ROLE_TO_USER:AddRoleToUser,
-    AUTHENTICATE:Authenticate,
-    INVALIDATE:Invalidate,
-    CHECK_ROLE:CheckRole,
-    PRINT_ALL_ROLES:AllRoles,
+    CREATE_USER:[InputCreateUser, CreateUser],
+    DELETE_USER:[InputDeleteUser, DeleteUser],
+    CREATE_ROLE:[InputCreateRole, CreateRole],
+    DELETE_ROLE:[InputDeleteRole, DeleteRole],
+    ADD_ROLE_TO_USER:[InputAddRoleToUser, AddRoleToUser],
+    AUTHENTICATE:[InputAuthenticate, Authenticate],
+    INVALIDATE:[InputInvalidate, Invalidate],
+    CHECK_ROLE:[InputCheckRole, CheckRole],
+    PRINT_ALL_ROLES:[InputAllRoles, AllRoles],
 }
 
 if __name__ == "__main__":
@@ -218,12 +257,15 @@ if __name__ == "__main__":
             iSelect = input("input menu select:")
         except:
             INFO("select must be num")
+            print
             continue
         if iSelect not in MENU_FUNC:
             INFO("menu select must between 1 and 9")
+            print
             continue
-        func = MENU_FUNC[iSelect]
-        func()
+        inputFunc, Func = MENU_FUNC[iSelect]
+        lstInput = inputFunc()
+        Func(*lstInput)
         print 
 
         

@@ -10,9 +10,6 @@ class User(object):
         return self.m_name
     
     def CheckPassword(self, password):
-        print "checkpass:", self.m_password, password, self.m_password == password
-        print type(self.m_password), len(self.m_password)
-        print type(password), len(password)
         return self.m_password == password
 
     def AddRole(self, role):
